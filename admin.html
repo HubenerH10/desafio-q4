@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090B;--panel:#141417;--panel2:#1C1C21;--ink:#F5F5F5;--muted:#A3A3AD;--dim:#6C6C75;--line:#2A2A31;
+--red:#F40009;--red2:#FF3B42;--green:#3CD47F;--amber:#E8A23B;--blue:#2F7BFF;--suco:#3DBE4E;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Nunito,Arial,Helvetica,sans-serif;font-weight:700;font-size:15px;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(520px 360px at 95% -10%,rgba(244,0,9,.28),transparent 70%)}
+.wrap{position:relative;max-width:1240px;margin:0 auto;padding:22px 20px 80px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--red2);outline-offset:2px;border-radius:6px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+h1{margin:4px 0 0;font-size:40px;line-height:1;font-weight:900;font-style:italic;letter-spacing:-1px}
+h1 span{color:var(--red)}
+.marca{font-size:13px;color:var(--muted);font-weight:800}
+.links{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:900;font-size:14px;background:var(--red);color:#fff;white-space:nowrap}
+.btn.sec{background:var(--panel2);border:1px solid var(--line);color:var(--ink)}
+.btn.ok{background:var(--green);color:#04210F}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+a.btn{text-decoration:none;display:inline-block}
+nav.tabs{display:flex;gap:4px;margin:22px 0 18px;border-bottom:1px solid var(--line)}
+nav.tabs button{background:none;border:0;padding:10px 14px;font-weight:900;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--red)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.kpi b{display:block;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi span{font-size:13px;color:var(--muted);font-weight:800}
+.kpi.alerta b{color:var(--amber)}
+.barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.barra h2{font-size:20px;margin:0;font-weight:900;margin-right:auto}
+.inp{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-weight:800;min-width:0}
+.inp.n{width:72px;text-align:right}
+.form select{max-width:320px}
+.inp.nome{width:100%;min-width:200px}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12.5px;color:var(--muted);font-weight:800;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--panel)}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.cancel td{color:var(--dim);text-decoration:line-through}
+tr.cancel td.motivo{text-decoration:none;white-space:normal;color:var(--muted)}
+.tag{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:900;background:var(--panel2);border:1px solid var(--line)}
+.tag.Aberto{background:rgba(60,212,127,.14);border-color:rgba(60,212,127,.4);color:var(--green)}
+.tag.Travado{background:rgba(232,162,59,.12);border-color:rgba(232,162,59,.4);color:var(--amber)}
+.tag.ajuste{background:rgba(47,123,255,.14);border-color:rgba(47,123,255,.4);color:#8DB6FF}
+.venc{color:var(--green);font-weight:900}
+.pil i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.pil.Refrigerantes i{background:var(--red)}.pil.Sucos i{background:var(--suco)}.pil.Isotônicos i{background:var(--blue)}
+.pin{font-variant-numeric:tabular-nums;letter-spacing:2px;font-size:16px;font-weight:900}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px}
+.card h3{margin:0 0 4px;font-size:17px;font-weight:900}
+.card p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.form{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.form label{display:grid;gap:4px;font-size:12.5px;color:var(--muted);font-weight:800}
+.nota{font-size:13.5px;color:var(--muted);margin:10px 2px 0}
+.nota b{color:var(--amber)}
+#login{max-width:380px;margin:12vh auto 0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+#login h1{font-size:34px}
+#login input{width:100%;margin:16px 0 10px;padding:12px;font-size:17px}
+.erro{color:#FFB3B6;font-size:14px;min-height:20px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#000;padding:11px 18px;border-radius:12px;font-weight:900;box-shadow:0 10px 40px rgba(0,0,0,.5);display:none;z-index:50;max-width:90vw}
+#toast.erro{background:#3A0003;color:#FFD3D5;border:1px solid var(--red)}
+#copia{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:40}
+#copia>div{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(640px,92vw)}
+#copia textarea{width:100%;height:240px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px}
+.vazio{padding:24px;text-align:center;color:var(--muted)}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="login">
+    <div class="marca">Coca-Cola Bandeirantes</div>
+    <h1>Desafio <span>Q4</span> · Admin</h1>
+    <input class="inp" id="senha" type="password" placeholder="Senha do admin" autocomplete="current-password">
+    <div class="erro" id="loginErro"></div>
+    <button class="btn" id="btnLogin" style="width:100%;padding:12px">Entrar</button>
+  </div>
+
+  <div id="app" hidden>
+    <header>
+      <div><div class="marca">Coca-Cola Bandeirantes · Time de categorias</div><h1>Desafio <span>Q4</span> · Admin</h1></div>
+      <div class="links">
+        <a class="btn sec" id="lnkPortal" target="_blank" rel="noopener">Abrir portal dos supervisores</a>
+        <a class="btn sec" id="lnkPlanilha" target="_blank" rel="noopener">Abrir planilha</a>
+        <button class="btn sec" data-acao="recarregar">Atualizar</button>
+      </div>
+    </header>
+    <nav class="tabs" role="tablist">
+      <button data-tab="conf" aria-selected="true">Confrontos</button>
+      <button data-tab="sup" aria-selected="false">Supervisores</button>
+      <button data-tab="mes" aria-selected="false">Meses</button>
+      <button data-tab="log" aria-selected="false">Log</button>
+    </nav>
+    <main id="main"></main>
+  </div>
+</div>
+<div id="toast" role="status"></div>
+<div id="copia"><div><h3 style="margin:0 0 8px">Copie o texto abaixo</h3><textarea id="copiaTxt" readonly></textarea><div style="margin-top:10px;text-align:right"><button class="btn sec" data-acao="fecharCopia">Fechar</button></div></div></div>
+
+<script>
+var PILARES=['Refrigerantes','Sucos','Isotônicos'];
+var st={token:null,d:null,tab:'conf',mesConf:null};
+
+function api(fn){ var a=Array.prototype.slice.call(arguments,1);
+  return new Promise(function(res,rej){ var r=google.script.run.withSuccessHandler(function(x){ x&&x.ok?res(x):rej(new Error(x&&x.erro||'Erro desconhecido.')); }).withFailureHandler(function(){ rej(new Error('Sem conexão com o servidor.')); }); r[fn].apply(r,a); }); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+var fdt=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+function dt(ms){ return ms?fdt.format(new Date(ms)):'—'; }
+function curto(n){ var p=String(n||'').split(/\s+/); var part=['de','da','do','dos','das','e']; var s=p.slice(1).filter(function(w){return part.indexOf(w.toLowerCase())<0;})[0]; return s? p[0]+' '+s : p[0]; }
+var fdc=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+function dc(ms){ return ms?fdc.format(new Date(ms)).replace(',',''):'—'; }
+function pct(v){ return v==null?'':String(v).replace('.',','); }
+function toast(msg,erro){ var t=document.getElementById('toast'); t.textContent=msg; t.className=erro?'erro':''; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(function(){t.style.display='none';},erro?6000:2600); }
+function toLocalInput(ms){ if(!ms) return ''; var d=new Date(ms), p=function(n){return ('0'+n).slice(-2);}; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes()); }
+function copiar(txt){
+  var mostrar=function(){ var c=document.getElementById('copia'); document.getElementById('copiaTxt').value=txt; c.style.display='flex'; document.getElementById('copiaTxt').select(); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){toast('Copiado.');},mostrar); } else mostrar();
+}
+function sup(cod){ return st.d.sup.filter(function(s){return s.cod===cod;})[0]; }
+function mesAberto(){ return st.d.meses.filter(function(m){return m.status==='Aberto';})[0]; }
+
+/* ---------- login ---------- */
+function entrar(){
+  var b=document.getElementById('btnLogin'); b.disabled=true;
+  api('apiAdminLogin',document.getElementById('senha').value).then(function(r){
+    st.token=r.token; try{ sessionStorage.setItem('dq4_adm',r.token); }catch(e){}
+    return carregar();
+  }).catch(function(e){ document.getElementById('loginErro').textContent=e.message; }).then(function(){ b.disabled=false; });
+}
+function carregar(){
+  return api('apiAdminDados',st.token).then(function(d){
+    st.d=d;
+    if(!st.mesConf){ var ab=mesAberto(); st.mesConf=(ab||d.meses.filter(function(m){return m.abertura&&m.abertura<=d.agora;}).pop()||d.meses[0]).id; }
+    document.getElementById('login').hidden=true; document.getElementById('app').hidden=false;
+    document.getElementById('lnkPortal').href=d.url; document.getElementById('lnkPlanilha').href=d.planilha;
+    render();
+  }).catch(function(e){
+    if(/Sessão expirada/.test(e.message)){ st.token=null; try{sessionStorage.removeItem('dq4_adm');}catch(x){} document.getElementById('app').hidden=true; document.getElementById('login').hidden=false; document.getElementById('loginErro').textContent=e.message; }
+    else toast(e.message,true);
+  });
+}
+function acao(fn,args,msg){
+  return api.apply(null,[fn,st.token].concat(args)).then(function(r){ toast(msg); return carregar().then(function(){return r;}); }).catch(function(e){ toast(e.message,true); throw e; });
+}
+
+/* ---------- render ---------- */
+function render(){
+  document.querySelectorAll('nav.tabs button').forEach(function(b){ b.setAttribute('aria-selected',b.dataset.tab===st.tab); });
+  var h={conf:rConf,sup:rSup,mes:rMes,log:rLog}[st.tab]();
+  document.getElementById('main').innerHTML=h;
+}
+
+function rConf(){
+  var d=st.d, id=st.mesConf, mes=d.meses.filter(function(m){return m.id===id;})[0];
+  var lista=d.confrontos.filter(function(c){return c.mes===id;});
+  var ativos=lista.filter(function(c){return c.status!=='Cancelado';});
+  var ocup={}; ativos.forEach(function(c){ocup[c.a]=1;ocup[c.b]=1;});
+  var livres=d.sup.filter(function(s){return s.ativo&&!ocup[s.cod];});
+  var lm=livres.filter(function(s){return s.tipo==='Mista';}).length, ls=livres.length-lm;
+  var comRes=ativos.filter(function(c){return c.venc;}).length;
+  var h='<div class="barra"><h2>Confrontos</h2><select class="inp" id="selMes">'+d.meses.map(function(m){return '<option value="'+m.id+'"'+(m.id===id?' selected':'')+'>'+esc(m.nome)+' · '+esc(m.status)+'</option>';}).join('')+'</select>'+
+    '<button class="btn sec" data-acao="copiarConf">Copiar para Excel</button></div>';
+  h+='<div class="kpis"><div class="kpi"><b>'+ativos.length+'</b><span>confrontos valendo em '+esc(mes.nome)+'</span></div>'+
+     '<div class="kpi'+(lm%2?' alerta':'')+'"><b>'+lm+'</b><span>mistas sem confronto</span></div>'+
+     '<div class="kpi'+(ls%2?' alerta':'')+'"><b>'+ls+'</b><span>segmentadas sem confronto</span></div>'+
+     '<div class="kpi"><b>'+comRes+'/'+ativos.length+'</b><span>com resultado lançado</span></div></div>';
+  if(!lista.length) h+='<div class="tw"><div class="vazio">Nenhum confronto registrado em '+esc(mes.nome)+'.</div></div>';
+  else{
+    h+='<div class="tw"><table><thead><tr><th>Ordem</th><th>ID</th><th>Registrado</th><th>Desafiante</th><th>Desafiado</th><th>Tipo</th><th>Pilar</th><th>Origem</th><th>% desafiante</th><th>% desafiado</th><th>Vencedor</th><th></th></tr></thead><tbody>'+
+    lista.map(function(c){
+      if(c.status==='Cancelado') return '<tr class="cancel"><td></td><td>'+esc(c.id)+'</td><td>'+dc(c.registrado)+'</td><td>'+esc(c.a)+' '+esc(curto(c.nomeA))+'</td><td>'+esc(c.b)+' '+esc(curto(c.nomeB))+'</td><td>'+esc(c.tipo)+'</td><td>'+esc(c.pilar)+'</td><td>'+esc(c.origem)+'</td><td colspan="4" class="motivo">Cancelado: '+esc(c.motivo)+'</td></tr>';
+      var v=c.venc==='Empate'?'Empate':c.venc?'<span class="venc">'+esc(c.venc)+' +'+(c.pts||5)+'</span>':'—';
+      return '<tr data-id="'+esc(c.id)+'"><td class="num">'+c.ordem+'º</td><td>'+esc(c.id)+'</td><td>'+dc(c.registrado)+'</td><td title="'+esc(c.nomeA)+'"><b>'+esc(c.a)+'</b> '+esc(curto(c.nomeA))+'</td><td title="'+esc(c.nomeB)+'"><b>'+esc(c.b)+'</b> '+esc(curto(c.nomeB))+'</td><td>'+esc(c.tipo)+'</td><td class="pil '+esc(c.pilar)+'"><i></i>'+esc(c.pilar)+'</td><td>'+esc(c.origem)+'</td>'+
+        '<td><input class="inp n" data-pa value="'+pct(c.pa)+'" inputmode="decimal" placeholder="%"></td><td><input class="inp n" data-pb value="'+pct(c.pb)+'" inputmode="decimal" placeholder="%"></td><td>'+v+'</td>'+
+        '<td><button class="btn ok" data-acao="resultado">Salvar</button> <button class="btn sec" data-acao="cancelar">Cancelar</button></td></tr>';
+    }).join('')+'</tbody></table></div>';
+  }
+  h+='<p class="nota">Resultado: digite o % sobre a meta do pilar no mês para cada um (ex.: 103,5). O maior % vence e leva +5 pontos; empate não pontua. Apague os dois campos e salve para limpar.</p>';
+  var ativosSup=d.sup.filter(function(s){return s.ativo;});
+  var opt=function(){ return '<option value="">Selecione</option>'+ativosSup.map(function(s){return '<option value="'+esc(s.cod)+'"'+(ocup[s.cod]?' disabled':'')+'>'+esc(s.cod)+' · '+esc(s.nome)+' ('+esc(s.tipo)+')'+(ocup[s.cod]?' — já em confronto':'')+'</option>';}).join(''); };
+  h+='<div class="card"><h3>Registrar confronto manualmente</h3><p>Para desafios feitos fora do portal (ex.: vídeo no grupo antes do portal entrar no ar). Vale a mesma regra de tipo e de um confronto por mês; a janela de datas não é exigida. O horário registrado é o de agora.</p>'+
+    '<div class="form"><label>Desafiante<select class="inp" id="mA">'+opt()+'</select></label><label>Desafiado<select class="inp" id="mB">'+opt()+'</select></label>'+
+    '<label>Pilar<select class="inp" id="mP">'+PILARES.map(function(p){return '<option>'+p+'</option>';}).join('')+'</select></label><button class="btn" data-acao="manual">Registrar em '+esc(mes.nome)+'</button></div></div>';
+  return h;
+}
+
+function rSup(){
+  var d=st.d, ab=mesAberto();
+  var at=d.sup.filter(function(s){return s.ativo;});
+  var nm=at.filter(function(s){return s.tipo==='Mista';}).length, ns=at.length-nm;
+  var hib=at.filter(function(s){return s.m>0&&s.s>0;}).length;
+  var h='<div class="barra"><h2>Supervisores</h2><button class="btn sec" data-acao="copiarAcessos">Copiar acessos de todos</button></div>'+
+    '<div class="kpis"><div class="kpi"><b>'+at.length+'</b><span>ativos</span></div><div class="kpi'+(nm%2?' alerta':'')+'"><b>'+nm+'</b><span>mistas'+(nm%2?' (ímpar: 1 sobra)':'')+'</span></div><div class="kpi'+(ns%2?' alerta':'')+'"><b>'+ns+'</b><span>segmentadas'+(ns%2?' (ímpar: 1 sobra)':'')+'</span></div><div class="kpi"><b>'+hib+'</b><span>híbridos (tipo pela maioria)</span></div></div>'+
+    '<div class="tw"><table><thead><tr><th>Código</th><th>Nome</th><th>Gerência</th><th>Rotas M/S</th><th>Regra</th><th>Ajuste</th><th>Tipo final</th><th>PIN</th><th>Ativo</th><th></th></tr></thead><tbody>'+
+    d.sup.map(function(s){
+      return '<tr data-cod="'+esc(s.cod)+'"><td><b>'+esc(s.cod)+'</b></td><td><input class="inp nome" data-nome value="'+esc(s.nome)+'"></td><td>'+esc(s.ger)+'</td><td class="num">'+s.m+' / '+s.s+'</td><td>'+esc(s.tipoRegra)+'</td>'+
+        '<td><select class="inp" data-ajuste'+(ab?' disabled title="Travado com o mês aberto"':'')+'><option value="">Pela regra</option><option'+(s.ajuste==='Mista'?' selected':'')+'>Mista</option><option'+(s.ajuste==='Segmentada'?' selected':'')+'>Segmentada</option></select></td>'+
+        '<td>'+esc(s.tipo)+(s.ajuste?' <span class="tag ajuste">ajustado</span>':'')+'</td><td class="pin">'+esc(s.pin)+'</td><td><input type="checkbox" data-ativo'+(s.ativo?' checked':'')+'></td>'+
+        '<td><button class="btn ok" data-acao="salvarSup">Salvar</button> <button class="btn sec" data-acao="novoPin">Novo PIN</button> <button class="btn sec" data-acao="copiarAcesso">Copiar acesso</button></td></tr>';
+    }).join('')+'</tbody></table></div>'+
+    '<p class="nota">Regra do tipo: maioria das rotas com vendedor (mista x segmentada); empate fica mista. '+(ab?'<b>'+esc(ab.nome)+' está aberto, então o ajuste de tipo está travado.</b>':'Use o ajuste só para exceções definidas com a ADM de vendas.')+'</p>'+
+    '<div class="card"><h3>Adicionar supervisão</h3><p>Para supervisão nova ou que estava sem supervisor. O PIN é gerado na hora.</p><div class="form">'+
+    '<label>Código<input class="inp" id="nCod" placeholder="It.1" size="6"></label><label>Nome<input class="inp" id="nNome" size="28"></label><label>Gerência<input class="inp" id="nGer" size="5"></label><label>Gerente<input class="inp" id="nGerente" size="22"></label>'+
+    '<label>Rotas mistas<input class="inp n" id="nM" value="0"></label><label>Rotas segmentadas<input class="inp n" id="nS" value="0"></label><button class="btn" data-acao="novoSup">Adicionar</button></div></div>';
+  return h;
+}
+
+function rMes(){
+  return '<div class="barra"><h2>Meses</h2></div><div class="tw"><table><thead><tr><th>Mês</th><th>Abertura dos desafios</th><th>Fechamento dos desafios</th><th>Status manual</th><th>Status agora</th><th></th></tr></thead><tbody>'+
+    st.d.meses.map(function(m){
+      return '<tr data-mes="'+esc(m.id)+'"><td><b>'+esc(m.nome)+'</b></td><td><input class="inp" type="datetime-local" data-ab value="'+toLocalInput(m.abertura)+'"></td><td><input class="inp" type="datetime-local" data-fe value="'+toLocalInput(m.fechamento)+'"></td>'+
+        '<td><select class="inp" data-manual>'+['','Aberto','Travado','Encerrado'].map(function(o){return '<option value="'+o+'"'+(m.manual===o?' selected':'')+'>'+(o||'Automático (pelas datas)')+'</option>';}).join('')+'</select></td>'+
+        '<td><span class="tag '+esc(m.status.replace(' ',''))+'">'+esc(m.status)+'</span></td><td><button class="btn ok" data-acao="salvarMes">Salvar</button></td></tr>';
+    }).join('')+'</tbody></table></div>'+
+    '<p class="nota">Automático: abre e fecha sozinho pelas datas. Use "Encerrado" depois de lançar todos os resultados do mês; aí nenhum confronto novo entra, nem manual.</p>';
+}
+
+function rLog(){
+  var l=st.d.log;
+  return '<div class="barra"><h2>Log</h2><span class="nota" style="margin:0">Últimos 200 registros, incluindo tentativas recusadas.</span></div><div class="tw"><table><thead><tr><th>Quando</th><th>Quem</th><th>Ação</th><th>Detalhe</th><th>Resultado</th></tr></thead><tbody>'+
+    (l.length?l.map(function(r){return '<tr><td>'+dt(r.quando)+'</td><td>'+esc(r.quem)+'</td><td>'+esc(r.acao)+'</td><td style="white-space:normal">'+esc(r.detalhe)+'</td><td>'+esc(r.resultado)+'</td></tr>';}).join(''):'<tr><td colspan="5" class="vazio">Sem registros.</td></tr>')+'</tbody></table></div>';
+}
+
+function textoAcesso(s){ return 'Desafio Q4 · Confrontos\nSupervisão: '+s.cod+' ('+s.nome+')\nPIN: '+s.pin+'\nPortal: '+st.d.url+'\nO PIN é pessoal. Desafio registrado não pode ser trocado.'; }
+
+/* ---------- eventos ---------- */
+document.getElementById('btnLogin').onclick=entrar;
+document.getElementById('senha').addEventListener('keydown',function(e){ if(e.key==='Enter') entrar(); });
+document.addEventListener('change',function(e){ if(e.target.id==='selMes'){ st.mesConf=e.target.value; render(); } });
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.tab){ st.tab=t.dataset.tab; render(); return; }
+  var a=t.dataset.acao, tr=t.closest('tr');
+  if(a==='recarregar') carregar().then(function(){toast('Atualizado.');});
+  else if(a==='fecharCopia') document.getElementById('copia').style.display='none';
+  else if(a==='resultado'){ var pa=tr.querySelector('[data-pa]').value.trim(), pb=tr.querySelector('[data-pb]').value.trim(); acao('apiAdminResultado',[tr.dataset.id,pa,pb],'Resultado salvo.'); }
+  else if(a==='cancelar'){ var mot=window.prompt('Motivo do cancelamento (fica no log):'); if(mot!==null) acao('apiAdminCancelar',[tr.dataset.id,mot],'Confronto cancelado. Os dois supervisores ficaram livres.'); }
+  else if(a==='manual'){ var A=document.getElementById('mA').value,B=document.getElementById('mB').value,P=document.getElementById('mP').value; if(!A||!B) return toast('Escolha desafiante e desafiado.',true); acao('apiAdminManual',[st.mesConf,A,B,P],'Confronto registrado.'); }
+  else if(a==='salvarSup'){ acao('apiAdminSalvarSup',[{cod:tr.dataset.cod,nome:tr.querySelector('[data-nome]').value,ajuste:tr.querySelector('[data-ajuste]').value,ativo:tr.querySelector('[data-ativo]').checked}],'Supervisor salvo.'); }
+  else if(a==='novoPin'){ if(window.confirm('Gerar novo PIN para '+tr.dataset.cod+'? O PIN atual para de funcionar.')) acao('apiAdminNovoPin',[tr.dataset.cod],'Novo PIN gerado.'); }
+  else if(a==='copiarAcesso') copiar(textoAcesso(sup(tr.dataset.cod)));
+  else if(a==='copiarAcessos') copiar(st.d.sup.filter(function(s){return s.ativo;}).map(textoAcesso).join('\n\n'));
+  else if(a==='novoSup'){ acao('apiAdminNovoSup',[{cod:document.getElementById('nCod').value,nome:document.getElementById('nNome').value,ger:document.getElementById('nGer').value,gerente:document.getElementById('nGerente').value,m:document.getElementById('nM').value,s:document.getElementById('nS').value}],'Supervisão adicionada.'); }
+  else if(a==='salvarMes'){ var ab=tr.querySelector('[data-ab]').value, fe=tr.querySelector('[data-fe]').value; if(!ab||!fe) return toast('Preencha abertura e fechamento.',true);
+    acao('apiAdminSalvarMes',[{id:tr.dataset.mes,abertura:new Date(ab).getTime(),fechamento:new Date(fe).getTime(),manual:tr.querySelector('[data-manual]').value}],'Mês salvo.'); }
+  else if(a==='copiarConf'){
+    var linhas=[['Ordem','ID','Mês','Registrado em','Desafiante','Nome desafiante','Desafiado','Nome desafiado','Tipo','Pilar','Status','% desafiante','% desafiado','Vencedor','Pontos','Origem'].join('\t')];
+    st.d.confrontos.filter(function(c){return c.mes===st.mesConf;}).forEach(function(c){ linhas.push([c.ordem||'',c.id,c.mes,dt(c.registrado),c.a,c.nomeA,c.b,c.nomeB,c.tipo,c.pilar,c.status,pct(c.pa),pct(c.pb),c.venc,c.pts==null?'':c.pts,c.origem].join('\t')); });
+    copiar(linhas.join('\n'));
+  }
+});
+
+try{ var tk=sessionStorage.getItem('dq4_adm'); if(tk){ st.token=tk; carregar(); } }catch(e){}
+</script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090B;--panel:#141417;--panel2:#1C1C21;--ink:#F5F5F5;--muted:#A3A3AD;--dim:#6C6C75;--line:#2A2A31;
+--red:#F40009;--red2:#FF3B42;--green:#3CD47F;--blue:#2F7BFF;--suco:#3DBE4E;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:Nunito,Arial,Helvetica,sans-serif;font-weight:700;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background:radial-gradient(600px 420px at 85% -10%,rgba(244,0,9,.38),transparent 70%),radial-gradient(420px 380px at -10% 110%,rgba(122,0,5,.45),transparent 70%)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+ background-size:44px 44px;mask-image:radial-gradient(ellipse at 70% 20%,#000,transparent 70%)}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:22px 18px 80px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--red2);outline-offset:2px;border-radius:8px}
+
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.marca{font-size:13px;color:var(--muted);font-weight:800}
+h1{margin:6px 0 0;font-size:clamp(44px,11vw,84px);line-height:.9;font-weight:900;letter-spacing:-2px;font-style:italic;text-transform:uppercase}
+h1 span{color:var(--red)}
+.sub{margin:8px 0 0;color:var(--muted);font-size:17px;font-weight:800}
+.btn{border:0;border-radius:999px;padding:14px 24px;font-weight:900;font-size:16px;background:var(--red);color:#fff;box-shadow:0 10px 30px rgba(244,0,9,.35)}
+.btn:disabled{background:#3A3A42;color:#8D8D96;box-shadow:none;cursor:not-allowed}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);box-shadow:none;color:var(--ink)}
+.btn.full{width:100%}
+
+nav.tabs{display:flex;gap:6px;margin:26px 0 0;overflow-x:auto;padding-bottom:2px}
+nav.tabs button{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:10px 16px;text-align:left;min-width:120px}
+nav.tabs button b{display:block;font-size:16px;font-weight:900}
+nav.tabs button small{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:800;margin-top:2px}
+nav.tabs button[aria-selected="true"]{background:var(--ink);color:#000;border-color:var(--ink)}
+nav.tabs button[aria-selected="true"] small{color:#444}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:0 0 auto}
+.dot.Aberto{background:var(--green);box-shadow:0 0 10px var(--green)}
+.dot.Travado{background:#E8A23B}
+.dot.Encerrado{background:var(--muted)}
+
+.faixa{margin:16px 0 0;padding:16px 18px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.faixa p{margin:0;font-size:16px;font-weight:800}
+.faixa p small{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+
+h2{font-size:22px;font-weight:900;margin:34px 0 12px;display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
+h2 small{font-size:14px;color:var(--muted);font-weight:800}
+
+.lista{display:grid;gap:10px}
+.vs{display:grid;grid-template-columns:44px 1fr 46px 1fr;align-items:center;gap:8px;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:12px 14px;position:relative;overflow:hidden}
+.vs .ord{font-size:20px;font-weight:900;color:var(--dim);font-style:italic}
+.vs .lado b{display:block;font-size:19px;font-weight:900;line-height:1.1}
+.vs .lado span{display:block;font-size:13.5px;color:var(--muted);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vs .lado.b{text-align:right}
+.vs .x{font-size:22px;font-weight:900;font-style:italic;color:var(--red2);text-align:center;letter-spacing:-1px}
+.vs .meta{grid-column:2/5;display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted);font-weight:800;border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
+.pil{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.pil i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.pil.Refrigerantes i{background:var(--red)}.pil.Sucos i{background:var(--suco)}.pil.Isotônicos i{background:var(--blue)}
+.vs .lado .res{display:block;font-size:14px;font-weight:900;color:var(--muted);margin-top:2px}
+.vs .lado.ganhou b,.vs .lado.ganhou .res{color:var(--green)}
+.vs .lado.perdeu{opacity:.55}
+.mais5{display:inline-block;background:rgba(60,212,127,.14);color:var(--green);border-radius:999px;padding:1px 8px;font-size:12.5px;margin-left:4px}
+.vazio{padding:26px 18px;border:1.5px dashed var(--line);border-radius:18px;color:var(--muted);font-size:16px;text-align:center}
+
+.livres{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grupo{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.grupo h3{margin:0 0 10px;font-size:16px;font-weight:900;display:flex;justify-content:space-between}
+.grupo h3 span{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;font-weight:800;padding:5px 10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line)}
+
+table.placar{width:100%;border-collapse:collapse;font-size:15px}
+.placar th{text-align:left;color:var(--muted);font-size:13px;font-weight:800;padding:8px 10px;border-bottom:1px solid var(--line)}
+.placar td{padding:11px 10px;border-bottom:1px solid var(--line);font-weight:800}
+.placar td.n{text-align:right;font-variant-numeric:tabular-nums}
+.placar td.pts{color:var(--green);font-weight:900;font-size:18px}
+.placar td.pos{color:var(--dim);font-style:italic;font-weight:900;width:40px}
+.tabwrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:6px 8px}
+
+/* fluxo */
+.ov{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sheet{width:100%;max-width:560px;max-height:92vh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;padding:20px 20px 28px;animation:sobe .35s cubic-bezier(.2,.8,.2,1)}
+@media (min-width:640px){.ov{align-items:center}.sheet{border-radius:24px;border-bottom:1px solid var(--line)}}
+@keyframes sobe{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.sheet .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sheet .top small{color:var(--muted);font-weight:800;font-size:13px}
+.fechar{background:var(--panel2);border:0;width:36px;height:36px;border-radius:50%;font-size:18px;font-weight:900}
+.sheet h4{font-size:26px;line-height:1.1;font-weight:900;margin:4px 0 6px}
+.sheet p.ajuda{margin:0 0 16px;color:var(--muted);font-size:15px}
+label.campo{display:block;font-size:14px;color:var(--muted);font-weight:800;margin:14px 0 6px}
+.inp{width:100%;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:14px;font-size:17px;font-weight:800}
+.inp.pin{letter-spacing:10px;font-size:26px;text-align:center}
+.erro{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:rgba(244,0,9,.12);border:1px solid rgba(244,0,9,.4);color:#FFB3B6;font-size:14.5px;display:none}
+.erro.on{display:block}
+.alvos{display:grid;gap:8px;margin-top:10px}
+.alvo{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;width:100%}
+.alvo b{font-size:17px;font-weight:900}
+.alvo span{display:block;font-size:13.5px;color:var(--muted)}
+.alvo em{font-style:normal;font-size:12.5px;font-weight:900;color:var(--green)}
+.alvo:disabled{opacity:.42;cursor:not-allowed}
+.alvo:disabled em{color:var(--muted)}
+.alvo[aria-pressed="true"]{border-color:var(--red);background:rgba(244,0,9,.10)}
+.pilares{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.pilar{border:2px solid var(--line);border-radius:18px;padding:18px 8px 14px;background:var(--panel);font-weight:900;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pilar i{width:34px;height:52px;border-radius:9px 9px 12px 12px;display:block;position:relative}
+.pilar i::before{content:"";position:absolute;left:50%;top:-8px;width:14px;height:10px;margin-left:-7px;border-radius:3px;background:inherit;filter:brightness(.8)}
+.pilar.Refrigerantes i{background:var(--red)}.pilar.Sucos i{background:var(--suco)}.pilar.Isotônicos i{background:var(--blue)}
+.pilar[aria-pressed="true"]{border-color:var(--ink);background:var(--panel2)}
+.passos{display:flex;gap:6px;margin:4px 0 14px}
+.passos i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.passos i.on{background:var(--red)}
+.aviso{margin:16px 0;padding:14px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:15px}
+.aviso b{color:var(--red2)}
+.acoes{display:grid;gap:10px;margin-top:18px}
+.card-img{width:100%;border-radius:16px;display:block;margin:6px 0 0;border:1px solid var(--line)}
+.carregando{color:var(--muted);font-size:15px;padding:30px 0;text-align:center}
+.atualizado{font-size:12px;color:var(--dim);margin-top:28px;text-align:center}
+@media (max-width:560px){.livres{grid-template-columns:1fr}.vs{grid-template-columns:30px 1fr 34px 1fr;padding:12px}.vs .lado b{font-size:17px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="marca">Coca-Cola Bandeirantes · Incentivo out–dez</div>
+      <h1>Desafio <span>Q4</span></h1>
+      <p class="sub">Confrontos entre supervisores</p>
+    </div>
+    <button class="btn" id="btnEntrar">Desafiar</button>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <main id="conteudo"><div class="carregando">Carregando confrontos…</div></main>
+  <div class="atualizado" id="atualizado"></div>
+</div>
+
+<div class="ov" id="ov" role="dialog" aria-modal="true" aria-labelledby="flTitulo">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+var PILARES = ['Refrigerantes','Sucos','Isotônicos'];
+var st = { estado:null, mesId:null, aba:'mes', sv:null, pin:null, alvo:null, pilar:null, passo:null, enviando:false };
+
+/* ---------- utilitários ---------- */
+function api(fn){
+  var args = Array.prototype.slice.call(arguments,1);
+  return new Promise(function(res,rej){
+    var r = google.script.run.withSuccessHandler(function(x){ x && x.ok ? res(x) : rej(new Error(x && x.erro || 'Não foi possível concluir. Tente de novo.')); })
+      .withFailureHandler(function(e){ rej(new Error('Sem conexão com o portal. Confira a internet e tente de novo.')); });
+    r[fn].apply(r,args);
+  });
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function curto(n){ var p=String(n||'').split(/\s+/); var part=['de','da','do','dos','das','e']; var s=p.slice(1).filter(function(w){return part.indexOf(w.toLowerCase())<0;})[0]; return s? p[0]+' '+s : p[0]; }
+var fData = new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+function dt(ms){ return ms ? fData.format(new Date(ms)).replace(',', ' às') : '—'; }
+function pct(v){ return v==null ? '' : String(Math.round(v*10)/10).replace('.',',')+'%'; }
+function mesAtual(){ return st.estado.meses.filter(function(m){return m.id===st.mesId;})[0]; }
+function supDe(cod){ return st.estado.sup.filter(function(s){return s.cod===cod;})[0]; }
+function meuConfronto(){ if(!st.sv) return null; return st.estado.confrontos.filter(function(c){return c.a===st.sv.cod||c.b===st.sv.cod;})[0]||null; }
+
+/* ---------- carga ---------- */
+function carregar(mesId, silencioso){
+  return api('apiEstado', mesId||null).then(function(e){
+    st.estado = e; st.mesId = e.mesId;
+    if(st.sv){ var s=supDe(st.sv.cod); if(s) st.sv.tipo=s.tipo; }
+    render();
+    if(st.passo==='alvo') renderFluxo();
+    document.getElementById('atualizado').textContent = 'Atualizado às '+new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date());
+  }).catch(function(err){
+    if(!silencioso) document.getElementById('conteudo').innerHTML = '<div class="vazio">'+esc(err.message)+'</div>';
+  });
+}
+
+/* ---------- página ---------- */
+function render(){
+  var e = st.estado;
+  var tabs = e.meses.map(function(m){
+    return '<button role="tab" aria-selected="'+(st.aba==='mes'&&m.id===st.mesId)+'" data-mes="'+esc(m.id)+'"><b>'+esc(m.nome)+'</b><small><i class="dot '+esc(m.status.replace(' ',''))+'"></i>'+esc(m.status)+'</small></button>';
+  }).join('') + '<button role="tab" aria-selected="'+(st.aba==='placar')+'" data-placar="1"><b>Placar</b><small>Pontos de confronto</small></button>';
+  document.getElementById('tabs').innerHTML = tabs;
+
+  var btn = document.getElementById('btnEntrar');
+  btn.textContent = st.sv ? (meuConfronto() ? 'Meu confronto' : 'Desafiar') : 'Desafiar';
+
+  document.getElementById('conteudo').innerHTML = st.aba==='placar' ? htmlPlacar() : htmlMes();
+}
+
+function htmlMes(){
+  var e = st.estado, m = mesAtual();
+  var txt = {
+    'Aberto':['Desafios abertos','Até '+dt(m.fechamento)+'. Quem registrar primeiro garante o adversário.'],
+    'Em breve':['Desafios ainda não abriram','Abrem em '+dt(m.abertura)+'.'],
+    'Travado':['Desafios fechados','Os confrontos de '+m.nome+' estão valendo. Resultado sai com o fechamento do mês.'],
+    'Encerrado':['Mês encerrado','Resultados de '+m.nome+' publicados.']
+  }[m.status] || [m.status,''];
+  var h = '<div class="faixa"><p>'+esc(txt[0])+'<small>'+esc(txt[1])+'</small></p>'+
+    (m.status==='Aberto' ? '<button class="btn" data-acao="entrar">'+(st.sv&&meuConfronto()?'Ver meu confronto':'Desafiar agora')+'</button>' : '')+'</div>';
+
+  h += '<h2>Confrontos de '+esc(m.nome)+' <small>'+e.confrontos.length+' registrados, por ordem de chegada</small></h2>';
+  h += e.confrontos.length ? '<div class="lista">'+e.confrontos.map(htmlVs).join('')+'</div>'
+    : '<div class="vazio">'+(m.status==='Aberto'?'Nenhum desafio ainda. O primeiro a registrar escolhe livremente.':'Nenhum confronto registrado neste mês.')+'</div>';
+
+  var livres = e.sup.filter(function(s){return s.livre;});
+  if(m.status==='Aberto' || m.status==='Em breve'){
+    var mis = livres.filter(function(s){return s.tipo==='Mista';}), seg = livres.filter(function(s){return s.tipo==='Segmentada';});
+    var grupo = function(nome,l){ return '<div class="grupo"><h3>'+nome+' <span>'+l.length+'</span></h3><div class="chips">'+
+      (l.length ? l.map(function(s){return '<span class="chip" title="'+esc(s.nome)+'">'+esc(s.cod)+' '+esc(curto(s.nome))+'</span>';}).join('') : '<span class="chip">Todos já estão em confronto</span>')+'</div></div>'; };
+    h += '<h2>Ainda sem confronto <small>Mista só desafia mista; segmentada só desafia segmentada</small></h2><div class="livres">'+grupo('Mista',mis)+grupo('Segmentada',seg)+'</div>';
+  }
+  return h;
+}
+
+function htmlVs(c){
+  var temRes = c.venc && c.pa!=null;
+  var cls = function(cod){ return !temRes||c.venc==='Empate' ? '' : (c.venc===cod?' ganhou':' perdeu'); };
+  var lado = function(cod,nome,p,lad){ return '<div class="lado '+lad+cls(cod)+'"><b>'+esc(cod)+'</b><span>'+esc(curto(nome))+'</span>'+
+    (temRes ? '<span class="res">'+pct(p)+(c.venc===cod?' <span class="mais5">+'+(c.pts||5)+' pts</span>':'')+'</span>' : '')+'</div>'; };
+  return '<div class="vs"><span class="ord">'+(c.ordem||'')+'º</span>'+lado(c.a,c.nomeA,c.pa,'a')+'<span class="x">VS</span>'+lado(c.b,c.nomeB,c.pb,'b')+
+    '<div class="meta"><span class="pil '+esc(c.pilar)+'"><i></i>'+esc(c.pilar)+(c.tipo?' · '+esc(c.tipo):'')+'</span><span>'+(temRes&&c.venc==='Empate'?'Empate · ':'')+esc(dt(c.registrado))+'</span></div></div>';
+}
+
+function htmlPlacar(){
+  var p = st.estado.placar;
+  if(!p.length) return '<h2>Placar do trimestre</h2><div class="vazio">O placar aparece quando os primeiros resultados forem lançados.</div>';
+  return '<h2>Placar do trimestre <small>+5 pontos por confronto vencido</small></h2><div class="tabwrap"><table class="placar"><thead><tr><th></th><th>Supervisor</th><th>Tipo</th><th class="n">Confrontos</th><th class="n">Vitórias</th><th class="n">Pontos</th></tr></thead><tbody>'+
+    p.map(function(r,i){ return '<tr><td class="pos">'+(i+1)+'º</td><td>'+esc(r.cod)+' '+esc(curto(r.nome))+'</td><td>'+esc(r.tipo)+'</td><td class="n">'+r.confrontos+'</td><td class="n">'+r.vitorias+'</td><td class="n pts">'+r.pontos+'</td></tr>'; }).join('')+
+    '</tbody></table></div>';
+}
+
+/* ---------- fluxo de desafio ---------- */
+function abrirFluxo(){
+  if(!st.estado) return;
+  st.alvo=null; st.pilar=null;
+  st.passo = !st.sv ? 'login' : (meuConfronto() ? 'meu' : 'alvo');
+  document.getElementById('ov').classList.add('on');
+  renderFluxo();
+}
+function fecharFluxo(){ document.getElementById('ov').classList.remove('on'); st.passo=null; }
+
+function cab(titulo, passo){
+  var m = mesAtual();
+  var barras = passo ? '<div class="passos">'+[1,2,3].map(function(i){return '<i class="'+(i<=passo?'on':'')+'"></i>';}).join('')+'</div>' : '';
+  return '<div class="top"><small>'+esc(m.nome)+(st.sv?' · '+esc(st.sv.cod)+' '+esc(curto(st.sv.nome)):'')+'</small><button class="fechar" data-acao="fechar" aria-label="Fechar">×</button></div>'+barras+'<h4 id="flTitulo">'+titulo+'</h4>';
+}
+
+function renderFluxo(){
+  var sh = document.getElementById('sheet'), m = mesAtual(), h='';
+  if(st.passo==='login'){
+    var porGer = {};
+    st.estado.sup.forEach(function(s){ (porGer[s.ger]=porGer[s.ger]||[]).push(s); });
+    var salvo=''; try{ salvo = localStorage.getItem('dq4_cod')||''; }catch(e){}
+    h = cab('Entre com sua supervisão') + '<p class="ajuda">Use o PIN de 4 números que o time de categorias enviou para você. Este celular vai lembrar dele.</p>'+
+      '<label class="campo" for="fSup">Sua supervisão</label><select class="inp" id="fSup"><option value="">Selecione</option>'+
+      Object.keys(porGer).sort().map(function(g){ return '<optgroup label="Gerência '+esc(g)+'">'+porGer[g].map(function(s){return '<option value="'+esc(s.cod)+'"'+(s.cod===salvo?' selected':'')+'>'+esc(s.cod)+' · '+esc(s.nome)+'</option>';}).join('')+'</optgroup>'; }).join('')+'</select>'+
+      '<label class="campo" for="fPin">PIN</label><input class="inp pin" id="fPin" inputmode="numeric" autocomplete="one-time-code" maxlength="4" pattern="[0-9]*">'+
+      '<div class="erro" id="fErro"></div><div class="acoes"><button class="btn full" data-acao="login">Entrar</button></div>';
+  }
+  else if(st.passo==='meu'){
+    var c = meuConfronto();
+    h = cab('Seu confronto em '+esc(m.nome)) + '<p class="ajuda">Registrado em '+esc(dt(c.registrado))+', '+c.ordem+'º da fila. Não dá para trocar adversário nem pilar.</p>'+
+      htmlVs(c)+'<div class="acoes"><button class="btn full" data-acao="imagem">Gerar imagem para o grupo</button><button class="btn ghost full" data-acao="sair">Sair deste celular</button></div><div id="imgBox"></div>';
+  }
+  else if(m.status!=='Aberto'){
+    h = cab(m.status==='Em breve' ? 'Os desafios ainda não abriram' : 'Os desafios de '+esc(m.nome)+' estão fechados')+
+      '<p class="ajuda">'+(m.status==='Em breve' ? 'Volte em '+esc(dt(m.abertura))+'. Quem registrar primeiro garante o adversário.' : 'Você ficou sem confronto neste mês. O próximo abre no início do mês que vem.')+'</p>'+
+      '<div class="acoes"><button class="btn ghost full" data-acao="fechar">Voltar</button></div>';
+  }
+  else if(st.passo==='alvo'){
+    var alvos = st.estado.sup.filter(function(s){ return s.tipo===st.sv.tipo && s.cod!==st.sv.cod; });
+    alvos.sort(function(a,b){ return (b.livre-a.livre) || a.cod.localeCompare(b.cod); });
+    var livres = alvos.filter(function(s){return s.livre;}).length;
+    if(st.alvo && !(supDe(st.alvo)||{}).livre) st.alvo=null;
+    h = cab('Quem você vai desafiar?',1) + '<p class="ajuda">Você é supervisor '+esc(st.sv.tipo.toLowerCase())+'. Aparecem só supervisores '+esc(st.sv.tipo.toLowerCase())+'s. '+livres+' livres agora.</p>'+
+      (livres ? '<div class="alvos">'+alvos.map(function(s){ return '<button class="alvo" data-alvo="'+esc(s.cod)+'" aria-pressed="'+(st.alvo===s.cod)+'"'+(s.livre?'':' disabled')+'><div><b>'+esc(s.cod)+'</b> <span>'+esc(s.nome)+' · Gerência '+esc(s.ger)+'</span></div><em>'+(s.livre?'Livre':'Em confronto')+'</em></button>'; }).join('')+'</div>'
+        : '<div class="vazio">Todos os supervisores '+esc(st.sv.tipo.toLowerCase())+'s já estão em confronto. Você ficou sem adversário em '+esc(m.nome)+'.</div>')+
+      '<div class="acoes"><button class="btn full" data-acao="irPilar"'+(st.alvo?'':' disabled')+'>Continuar</button></div>';
+  }
+  else if(st.passo==='pilar'){
+    h = cab('Em qual pilar?',2) + '<p class="ajuda">Vale o volume do pilar no mês, em % sobre a meta. Quem fizer o maior % leva +5 pontos.</p>'+
+      '<div class="pilares">'+PILARES.map(function(p){ return '<button class="pilar '+p+'" data-pilar="'+p+'" aria-pressed="'+(st.pilar===p)+'"><i></i>'+p+'</button>'; }).join('')+'</div>'+
+      '<div class="acoes"><button class="btn full" data-acao="irConfirmar"'+(st.pilar?'':' disabled')+'>Continuar</button><button class="btn ghost full" data-acao="voltarAlvo">Trocar adversário</button></div>';
+  }
+  else if(st.passo==='confirmar'){
+    var b = supDe(st.alvo);
+    h = cab('Confirme o desafio',3) +
+      htmlVs({ordem:'',a:st.sv.cod,nomeA:st.sv.nome,b:b.cod,nomeB:b.nome,pilar:st.pilar,tipo:st.sv.tipo,registrado:null}).replace('<span class="ord">º</span>','<span class="ord"></span>').replace('—','agora')+
+      '<div class="aviso"><b>Depois de confirmar, não dá para trocar.</b> Adversário e pilar ficam travados até o fim de '+esc(m.nome)+'. Se alguém registrar '+esc(b.cod)+' antes de você, o portal avisa e você escolhe outro.</div>'+
+      '<div class="erro" id="fErro"></div><div class="acoes"><button class="btn full" data-acao="desafiar">Confirmar desafio</button><button class="btn ghost full" data-acao="voltarPilar">Voltar</button></div>';
+  }
+  else if(st.passo==='feito'){
+    var c2 = meuConfronto();
+    h = cab('Desafio registrado') + '<p class="ajuda">Você é o '+c2.ordem+'º da fila de '+esc(m.nome)+'. Registrado em '+esc(dt(c2.registrado))+'.</p>'+
+      htmlVs(c2)+'<div class="acoes"><button class="btn full" data-acao="imagem">Gerar imagem para o grupo</button><button class="btn ghost full" data-acao="fechar">Ver todos os confrontos</button></div><div id="imgBox"></div>';
+  }
+  sh.innerHTML = h;
+  var pinEl = document.getElementById('fPin'); if(pinEl) pinEl.focus();
+}
+
+function mostrarErro(msg){ var e=document.getElementById('fErro'); if(e){ e.textContent=msg; e.classList.add('on'); } }
+
+function fazerLogin(){
+  var cod = document.getElementById('fSup').value, pin = document.getElementById('fPin').value.trim();
+  if(!cod) return mostrarErro('Selecione sua supervisão.');
+  if(!/^\d{4}$/.test(pin)) return mostrarErro('O PIN tem 4 números.');
+  var b = document.querySelector('[data-acao="login"]'); b.disabled=true; b.textContent='Entrando…';
+  api('apiLogin',cod,pin).then(function(r){
+    st.sv = r.sv; st.pin = pin;
+    try{ localStorage.setItem('dq4_cod',cod); localStorage.setItem('dq4_pin',pin); }catch(e){}
+    st.passo = meuConfronto() ? 'meu' : 'alvo';
+    render(); renderFluxo();
+  }).catch(function(err){ b.disabled=false; b.textContent='Entrar'; mostrarErro(err.message); });
+}
+
+function desafiar(){
+  if(st.enviando) return; st.enviando=true;
+  var b = document.querySelector('[data-acao="desafiar"]'); b.disabled=true; b.textContent='Registrando…';
+  api('apiDesafiar', st.sv.cod, st.pin, st.mesId, st.alvo, st.pilar).then(function(){
+    st.enviando=false;
+    return carregar(st.mesId).then(function(){ st.passo='feito'; renderFluxo(); });
+  }).catch(function(err){
+    st.enviando=false; b.disabled=false; b.textContent='Confirmar desafio';
+    mostrarErro(err.message);
+    carregar(st.mesId,true);
+  });
+}
+
+/* ---------- imagem para o grupo ---------- */
+function gerarImagem(){
+  var c = meuConfronto(); if(!c) return;
+  var box = document.getElementById('imgBox'); box.innerHTML='<div class="carregando">Montando a imagem…</div>';
+  var go = function(){
+    var W=1080,H=1080,cv=document.createElement('canvas'); cv.width=W; cv.height=H; var x=cv.getContext('2d');
+    x.fillStyle='#09090B'; x.fillRect(0,0,W,H);
+    var g=x.createRadialGradient(W*.85,-60,10,W*.85,-60,700); g.addColorStop(0,'rgba(244,0,9,.75)'); g.addColorStop(1,'rgba(244,0,9,0)'); x.fillStyle=g; x.fillRect(0,0,W,H);
+    var g2=x.createRadialGradient(0,H,10,0,H,620); g2.addColorStop(0,'rgba(122,0,5,.8)'); g2.addColorStop(1,'rgba(122,0,5,0)'); x.fillStyle=g2; x.fillRect(0,0,W,H);
+    x.strokeStyle='rgba(255,255,255,.05)'; x.lineWidth=1; for(var i=0;i<W;i+=54){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke();x.beginPath();x.moveTo(0,i);x.lineTo(W,i);x.stroke();}
+    x.textAlign='left'; x.fillStyle='#A3A3AD'; x.font='800 30px Nunito, Arial'; x.fillText('Coca-Cola Bandeirantes · '+mesAtual().nome,80,110);
+    x.fillStyle='#F5F5F5'; x.font='italic 900 120px Nunito, Arial'; x.fillText('DESAFIO',80,240); x.fillStyle='#F40009'; x.fillText('Q4',640,240);
+    x.save(); x.translate(W/2,H/2+20); x.rotate(-0.12);
+    x.fillStyle='#F40009'; x.fillRect(-W,-6,W*2,12); x.restore();
+    x.textAlign='center';
+    x.fillStyle='#F5F5F5'; x.font='900 118px Nunito, Arial'; x.fillText(c.a,W*.27,H/2-40); x.fillText(c.b,W*.73,H/2+150);
+    x.fillStyle='#A3A3AD'; x.font='800 36px Nunito, Arial'; x.fillText(curto(c.nomeA),W*.27,H/2+10); x.fillText(curto(c.nomeB),W*.73,H/2+200);
+    x.fillStyle='#FF3B42'; x.font='italic 900 150px Nunito, Arial'; x.fillText('VS',W/2,H/2+75);
+    var cor={Refrigerantes:'#F40009',Sucos:'#3DBE4E','Isotônicos':'#2F7BFF'}[c.pilar];
+    x.fillStyle=cor; roundRect(x,80,H-230,W-160,96,48); x.fill();
+    x.fillStyle='#fff'; x.font='900 46px Nunito, Arial'; x.fillText('Pilar: volume '+c.pilar.toLowerCase(),W/2,H-167);
+    x.fillStyle='#6C6C75'; x.font='800 28px Nunito, Arial'; x.fillText(c.ordem+'º desafio registrado · '+dt(c.registrado),W/2,H-70);
+    cv.toBlob(function(blob){
+      var url = URL.createObjectURL(blob), nome='desafio-'+c.a+'-vs-'+c.b+'.png';
+      var file = null; try{ file = new File([blob],nome,{type:'image/png'}); }catch(e){}
+      var podeShare = file && navigator.canShare && navigator.canShare({files:[file]});
+      box.innerHTML = '<img class="card-img" src="'+url+'" alt="Imagem do confronto '+esc(c.a)+' contra '+esc(c.b)+'">'+
+        '<div class="acoes">'+(podeShare?'<button class="btn full" id="btnShare">Compartilhar no WhatsApp</button>':'')+
+        '<a class="btn ghost full" style="text-align:center;text-decoration:none" href="'+url+'" download="'+nome+'">Baixar imagem</a></div>'+
+        '<p class="ajuda" style="margin-top:10px">No celular, você também pode tocar e segurar a imagem para salvar.</p>';
+      var bs=document.getElementById('btnShare'); if(bs) bs.onclick=function(){ navigator.share({files:[file],text:'Desafio Q4: '+c.a+' x '+c.b+' no pilar '+c.pilar+'. Bora!'}).catch(function(){}); };
+    },'image/png');
+  };
+  (document.fonts && document.fonts.load ? Promise.all([document.fonts.load('900 60px Nunito'),document.fonts.load('italic 900 60px Nunito'),document.fonts.load('800 30px Nunito')]) : Promise.resolve()).then(go,go);
+}
+function roundRect(x,a,b,w,h,r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',function(ev){
+  var t = ev.target.closest('button,[data-acao]'); if(!t) return;
+  if(t.dataset.mes){ st.aba='mes'; carregar(t.dataset.mes); return; }
+  if(t.dataset.placar){ st.aba='placar'; render(); return; }
+  if(t.id==='btnEntrar'){ abrirFluxo(); return; }
+  if(t.dataset.alvo){ st.alvo=t.dataset.alvo; renderFluxo(); return; }
+  if(t.dataset.pilar){ st.pilar=t.dataset.pilar; renderFluxo(); return; }
+  var a = t.dataset.acao;
+  if(a==='entrar') abrirFluxo();
+  else if(a==='fechar') fecharFluxo();
+  else if(a==='login') fazerLogin();
+  else if(a==='irPilar'){ st.passo='pilar'; renderFluxo(); }
+  else if(a==='voltarAlvo'){ st.passo='alvo'; renderFluxo(); }
+  else if(a==='irConfirmar'){ st.passo='confirmar'; renderFluxo(); }
+  else if(a==='voltarPilar'){ st.passo='pilar'; renderFluxo(); }
+  else if(a==='desafiar') desafiar();
+  else if(a==='imagem') gerarImagem();
+  else if(a==='sair'){ st.sv=null; st.pin=null; try{ localStorage.removeItem('dq4_pin'); }catch(e){} fecharFluxo(); render(); }
+});
+document.addEventListener('keydown',function(ev){
+  if(ev.key==='Escape' && st.passo) fecharFluxo();
+  if(ev.key==='Enter' && st.passo==='login') fazerLogin();
+});
+document.getElementById('ov').addEventListener('click',function(ev){ if(ev.target.id==='ov') fecharFluxo(); });
+
+carregar(null).then(function(){
+  var cod='',pin=''; try{ cod=localStorage.getItem('dq4_cod')||''; pin=localStorage.getItem('dq4_pin')||''; }catch(e){}
+  if(cod&&pin) api('apiLogin',cod,pin).then(function(r){ st.sv=r.sv; st.pin=pin; render(); })
+    .catch(function(){ try{ localStorage.removeItem('dq4_pin'); }catch(e){} });
+});
+setInterval(function(){ if(document.visibilityState==='visible' && st.estado && st.passo!=='confirmar' && !st.enviando) carregar(st.mesId,true); }, 20000);
+</script>
+</body>
+</html>
