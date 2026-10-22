@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,8 +111,13 @@ tr.cancel td.motivo{text-decoration:none;white-space:normal;color:var(--muted)}
 var PILARES=['Refrigerantes','Sucos','Isotônicos'];
 var st={token:null,d:null,tab:'conf',mesConf:null};
 
-function api(fn){ var a=Array.prototype.slice.call(arguments,1);
-  return new Promise(function(res,rej){ var r=google.script.run.withSuccessHandler(function(x){ x&&x.ok?res(x):rej(new Error(x&&x.erro||'Erro desconhecido.')); }).withFailureHandler(function(){ rej(new Error('Sem conexão com o servidor.')); }); r[fn].apply(r,a); }); }
+var API_URL = 'https://script.google.com/macros/s/AKfycbwHtu61uymU99GHCrwL2PyJhie3aElC7AfwAG6J4DfIK1Oh7W2e6fU9W3yR2x2LQLEs/exec'; // termina em /exec
+function api(fn){
+  var args = Array.prototype.slice.call(arguments,1);
+  return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args})})
+    .then(function(r){ if(!r.ok) throw new Error(); return r.json(); },function(){ throw new Error('Sem conexão com o portal. Confira a internet e tente de novo.'); })
+    .then(function(x){ if(x&&x.ok) return x; throw new Error(x&&x.erro||'Não foi possível concluir. Tente de novo.'); });
+}
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 var fdt=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
 function dt(ms){ return ms?fdt.format(new Date(ms)):'—'; }
@@ -143,7 +147,7 @@ function carregar(){
     st.d=d;
     if(!st.mesConf){ var ab=mesAberto(); st.mesConf=(ab||d.meses.filter(function(m){return m.abertura&&m.abertura<=d.agora;}).pop()||d.meses[0]).id; }
     document.getElementById('login').hidden=true; document.getElementById('app').hidden=false;
-    document.getElementById('lnkPortal').href=d.url; document.getElementById('lnkPlanilha').href=d.planilha;
+    document.getElementById('lnkPortal').href='index.html'; document.getElementById('lnkPlanilha').href=d.planilha;
     render();
   }).catch(function(e){
     if(/Sessão expirada/.test(e.message)){ st.token=null; try{sessionStorage.removeItem('dq4_adm');}catch(x){} document.getElementById('app').hidden=true; document.getElementById('login').hidden=false; document.getElementById('loginErro').textContent=e.message; }
@@ -232,7 +236,7 @@ function rLog(){
     (l.length?l.map(function(r){return '<tr><td>'+dt(r.quando)+'</td><td>'+esc(r.quem)+'</td><td>'+esc(r.acao)+'</td><td style="white-space:normal">'+esc(r.detalhe)+'</td><td>'+esc(r.resultado)+'</td></tr>';}).join(''):'<tr><td colspan="5" class="vazio">Sem registros.</td></tr>')+'</tbody></table></div>';
 }
 
-function textoAcesso(s){ return 'Desafio Q4 · Confrontos\nSupervisão: '+s.cod+' ('+s.nome+')\nPIN: '+s.pin+'\nPortal: '+st.d.url+'\nO PIN é pessoal. Desafio registrado não pode ser trocado.'; }
+function textoAcesso(s){ return 'Desafio Q4 · Confrontos\nSupervisão: '+s.cod+' ('+s.nome+')\nPIN: '+s.pin+'\nPortal: '+location.href.replace(/admin\.html.*$/,'')+'\nO PIN é pessoal. Desafio registrado não pode ser trocado.'; }
 
 /* ---------- eventos ---------- */
 document.getElementById('btnLogin').onclick=entrar;

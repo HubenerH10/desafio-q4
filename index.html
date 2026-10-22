@@ -149,7 +149,7 @@ var PILARES = ['Refrigerantes','Sucos','Isotônicos'];
 var st = { estado:null, mesId:null, aba:'mes', sv:null, pin:null, alvo:null, pilar:null, passo:null, enviando:false };
 
 /* ---------- utilitários ---------- */
-var API_URL = 'COLE_AQUI_A_URL_DO_APP_DA_WEB'; // termina em /exec
+var API_URL = 'https://script.google.com/macros/s/AKfycbwHtu61uymU99GHCrwL2PyJhie3aElC7AfwAG6J4DfIK1Oh7W2e6fU9W3yR2x2LQLEs/exec'; // termina em /exec
 function api(fn){
   var args = Array.prototype.slice.call(arguments,1);
   return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args})})
