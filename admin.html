@@ -54,7 +54,6 @@ tr.cancel td.motivo{text-decoration:none;white-space:normal;color:var(--muted)}
 .tag.ajuste{background:rgba(47,123,255,.14);border-color:rgba(47,123,255,.4);color:#8DB6FF}
 .venc{color:var(--green);font-weight:900}
 .pil i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
-.pil.Refrigerantes i{background:var(--red)}.pil.Sucos i{background:var(--suco)}.pil.Isotônicos i{background:var(--blue)}
 .pin{font-variant-numeric:tabular-nums;letter-spacing:2px;font-size:16px;font-weight:900}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px}
 .card h3{margin:0 0 4px;font-size:17px;font-weight:900}
@@ -108,10 +107,11 @@ tr.cancel td.motivo{text-decoration:none;white-space:normal;color:var(--muted)}
 <div id="copia"><div><h3 style="margin:0 0 8px">Copie o texto abaixo</h3><textarea id="copiaTxt" readonly></textarea><div style="margin-top:10px;text-align:right"><button class="btn sec" data-acao="fecharCopia">Fechar</button></div></div></div>
 
 <script>
-var PILARES=['Refrigerantes','Sucos','Isotônicos'];
+var PILARES=['Sabores','Retornáveis','Refri Single','Sucos','Powerade','Missões Guiadas'];
+var PCOR={'Sabores':'#F28C00','Retornáveis':'#B5000A','Refri Single':'#F40009','Sucos':'#3DBE4E','Powerade':'#2F7BFF','Missões Guiadas':'#9B5CF6'};
 var st={token:null,d:null,tab:'conf',mesConf:null};
 
-var API_URL = 'https://script.google.com/macros/s/AKfycbwHtu61uymU99GHCrwL2PyJhie3aElC7AfwAG6J4DfIK1Oh7W2e6fU9W3yR2x2LQLEs/exec'; // termina em /exec
+var API_URL = 'https://script.google.com/macros/s/AKfycbwHtu61uymU99GHCrwL2PyJhie3aElC7AfwAG6J4DfIK1Oh7W2e6fU9W3yR2x2LQLEs/exec';
 function api(fn){
   var args = Array.prototype.slice.call(arguments,1);
   return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args})})
@@ -185,7 +185,7 @@ function rConf(){
     lista.map(function(c){
       if(c.status==='Cancelado') return '<tr class="cancel"><td></td><td>'+esc(c.id)+'</td><td>'+dc(c.registrado)+'</td><td>'+esc(c.a)+' '+esc(curto(c.nomeA))+'</td><td>'+esc(c.b)+' '+esc(curto(c.nomeB))+'</td><td>'+esc(c.tipo)+'</td><td>'+esc(c.pilar)+'</td><td>'+esc(c.origem)+'</td><td colspan="4" class="motivo">Cancelado: '+esc(c.motivo)+'</td></tr>';
       var v=c.venc==='Empate'?'Empate':c.venc?'<span class="venc">'+esc(c.venc)+' +'+(c.pts||5)+'</span>':'—';
-      return '<tr data-id="'+esc(c.id)+'"><td class="num">'+c.ordem+'º</td><td>'+esc(c.id)+'</td><td>'+dc(c.registrado)+'</td><td title="'+esc(c.nomeA)+'"><b>'+esc(c.a)+'</b> '+esc(curto(c.nomeA))+'</td><td title="'+esc(c.nomeB)+'"><b>'+esc(c.b)+'</b> '+esc(curto(c.nomeB))+'</td><td>'+esc(c.tipo)+'</td><td class="pil '+esc(c.pilar)+'"><i></i>'+esc(c.pilar)+'</td><td>'+esc(c.origem)+'</td>'+
+      return '<tr data-id="'+esc(c.id)+'"><td class="num">'+c.ordem+'º</td><td>'+esc(c.id)+'</td><td>'+dc(c.registrado)+'</td><td title="'+esc(c.nomeA)+'"><b>'+esc(c.a)+'</b> '+esc(curto(c.nomeA))+'</td><td title="'+esc(c.nomeB)+'"><b>'+esc(c.b)+'</b> '+esc(curto(c.nomeB))+'</td><td>'+esc(c.tipo)+'</td><td class="pil"><i style="background:'+(PCOR[c.pilar]||'#888')+'"></i>'+esc(c.pilar)+'</td><td>'+esc(c.origem)+'</td>'+
         '<td><input class="inp n" data-pa value="'+pct(c.pa)+'" inputmode="decimal" placeholder="%"></td><td><input class="inp n" data-pb value="'+pct(c.pb)+'" inputmode="decimal" placeholder="%"></td><td>'+v+'</td>'+
         '<td><button class="btn ok" data-acao="resultado">Salvar</button> <button class="btn sec" data-acao="cancelar">Cancelar</button></td></tr>';
     }).join('')+'</tbody></table></div>';
@@ -195,7 +195,7 @@ function rConf(){
   var opt=function(){ return '<option value="">Selecione</option>'+ativosSup.map(function(s){return '<option value="'+esc(s.cod)+'"'+(ocup[s.cod]?' disabled':'')+'>'+esc(s.cod)+' · '+esc(s.nome)+' ('+esc(s.tipo)+')'+(ocup[s.cod]?' — já em confronto':'')+'</option>';}).join(''); };
   h+='<div class="card"><h3>Registrar confronto manualmente</h3><p>Para desafios feitos fora do portal (ex.: vídeo no grupo antes do portal entrar no ar). Vale a mesma regra de tipo e de um confronto por mês; a janela de datas não é exigida. O horário registrado é o de agora.</p>'+
     '<div class="form"><label>Desafiante<select class="inp" id="mA">'+opt()+'</select></label><label>Desafiado<select class="inp" id="mB">'+opt()+'</select></label>'+
-    '<label>Pilar<select class="inp" id="mP">'+PILARES.map(function(p){return '<option>'+p+'</option>';}).join('')+'</select></label><button class="btn" data-acao="manual">Registrar em '+esc(mes.nome)+'</button></div></div>';
+    '<label>Pilar<select class="inp" id="mP">'+PILARES.filter(function(p){return p!=='Missões Guiadas'||mes.missoes;}).map(function(p){return '<option>'+p+'</option>';}).join('')+'</select></label><button class="btn" data-acao="manual">Registrar em '+esc(mes.nome)+'</button></div></div>';
   return h;
 }
 
@@ -221,13 +221,14 @@ function rSup(){
 }
 
 function rMes(){
-  return '<div class="barra"><h2>Meses</h2></div><div class="tw"><table><thead><tr><th>Mês</th><th>Abertura dos desafios</th><th>Fechamento dos desafios</th><th>Status manual</th><th>Status agora</th><th></th></tr></thead><tbody>'+
+  return '<div class="barra"><h2>Meses</h2></div><div class="tw"><table><thead><tr><th>Mês</th><th>Abertura dos desafios</th><th>Fechamento dos desafios</th><th>Status manual</th><th>Missões Guiadas vale</th><th>Status agora</th><th></th></tr></thead><tbody>'+
     st.d.meses.map(function(m){
       return '<tr data-mes="'+esc(m.id)+'"><td><b>'+esc(m.nome)+'</b></td><td><input class="inp" type="datetime-local" data-ab value="'+toLocalInput(m.abertura)+'"></td><td><input class="inp" type="datetime-local" data-fe value="'+toLocalInput(m.fechamento)+'"></td>'+
         '<td><select class="inp" data-manual>'+['','Aberto','Travado','Encerrado'].map(function(o){return '<option value="'+o+'"'+(m.manual===o?' selected':'')+'>'+(o||'Automático (pelas datas)')+'</option>';}).join('')+'</select></td>'+
+        '<td style="text-align:center"><input type="checkbox" data-missoes'+(m.missoes?' checked':'')+'></td>'+
         '<td><span class="tag '+esc(m.status.replace(' ',''))+'">'+esc(m.status)+'</span></td><td><button class="btn ok" data-acao="salvarMes">Salvar</button></td></tr>';
     }).join('')+'</tbody></table></div>'+
-    '<p class="nota">Automático: abre e fecha sozinho pelas datas. Use "Encerrado" depois de lançar todos os resultados do mês; aí nenhum confronto novo entra, nem manual.</p>';
+    '<p class="nota">Automático: abre e fecha sozinho pelas datas, no horário de Brasília. Missões Guiadas só aparece como pilar nos meses marcados. Use "Encerrado" depois de lançar todos os resultados do mês; aí nenhum confronto novo entra, nem manual.</p>';
 }
 
 function rLog(){
@@ -257,7 +258,7 @@ document.addEventListener('click',function(e){
   else if(a==='copiarAcessos') copiar(st.d.sup.filter(function(s){return s.ativo;}).map(textoAcesso).join('\n\n'));
   else if(a==='novoSup'){ acao('apiAdminNovoSup',[{cod:document.getElementById('nCod').value,nome:document.getElementById('nNome').value,ger:document.getElementById('nGer').value,gerente:document.getElementById('nGerente').value,m:document.getElementById('nM').value,s:document.getElementById('nS').value}],'Supervisão adicionada.'); }
   else if(a==='salvarMes'){ var ab=tr.querySelector('[data-ab]').value, fe=tr.querySelector('[data-fe]').value; if(!ab||!fe) return toast('Preencha abertura e fechamento.',true);
-    acao('apiAdminSalvarMes',[{id:tr.dataset.mes,abertura:new Date(ab).getTime(),fechamento:new Date(fe).getTime(),manual:tr.querySelector('[data-manual]').value}],'Mês salvo.'); }
+    acao('apiAdminSalvarMes',[{id:tr.dataset.mes,abertura:new Date(ab).getTime(),fechamento:new Date(fe).getTime(),manual:tr.querySelector('[data-manual]').value,missoes:tr.querySelector('[data-missoes]').checked}],'Mês salvo.'); }
   else if(a==='copiarConf'){
     var linhas=[['Ordem','ID','Mês','Registrado em','Desafiante','Nome desafiante','Desafiado','Nome desafiado','Tipo','Pilar','Status','% desafiante','% desafiado','Vencedor','Pontos','Origem'].join('\t')];
     st.d.confrontos.filter(function(c){return c.mes===st.mesConf;}).forEach(function(c){ linhas.push([c.ordem||'',c.id,c.mes,dt(c.registrado),c.a,c.nomeA,c.b,c.nomeB,c.tipo,c.pilar,c.status,pct(c.pa),pct(c.pb),c.venc,c.pts==null?'':c.pts,c.origem].join('\t')); });

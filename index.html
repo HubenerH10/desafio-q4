@@ -59,7 +59,6 @@ h2 small{font-size:14px;color:var(--muted);font-weight:800}
 .vs .meta{grid-column:2/5;display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted);font-weight:800;border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
 .pil{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
 .pil i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.pil.Refrigerantes i{background:var(--red)}.pil.Sucos i{background:var(--suco)}.pil.Isotônicos i{background:var(--blue)}
 .vs .lado .res{display:block;font-size:14px;font-weight:900;color:var(--muted);margin-top:2px}
 .vs .lado.ganhou b,.vs .lado.ganhou .res{color:var(--green)}
 .vs .lado.perdeu{opacity:.55}
@@ -106,10 +105,15 @@ label.campo{display:block;font-size:14px;color:var(--muted);font-weight:800;marg
 .alvo:disabled em{color:var(--muted)}
 .alvo[aria-pressed="true"]{border-color:var(--red);background:rgba(244,0,9,.10)}
 .pilares{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.pilar small{display:block;font-size:11.5px;color:var(--muted);font-weight:800;margin-bottom:1px}
+.pilar span{display:block;text-align:center;line-height:1.15}
+.pilar i.alvo{width:46px;height:46px;border-radius:50%;margin-top:6px;background:radial-gradient(circle,#fff 0 18%,var(--c) 19% 38%,#fff 39% 56%,var(--c) 57%)!important}
+.pilar i.alvo::before{display:none}
+.pilar:disabled{opacity:.4;cursor:not-allowed}
+.pilar em{font-style:normal;font-size:11.5px;color:var(--muted);font-weight:800}
 .pilar{border:2px solid var(--line);border-radius:18px;padding:18px 8px 14px;background:var(--panel);font-weight:900;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:10px}
 .pilar i{width:34px;height:52px;border-radius:9px 9px 12px 12px;display:block;position:relative}
 .pilar i::before{content:"";position:absolute;left:50%;top:-8px;width:14px;height:10px;margin-left:-7px;border-radius:3px;background:inherit;filter:brightness(.8)}
-.pilar.Refrigerantes i{background:var(--red)}.pilar.Sucos i{background:var(--suco)}.pilar.Isotônicos i{background:var(--blue)}
 .pilar[aria-pressed="true"]{border-color:var(--ink);background:var(--panel2)}
 .passos{display:flex;gap:6px;margin:4px 0 14px}
 .passos i{flex:1;height:4px;border-radius:2px;background:var(--line)}
@@ -145,11 +149,13 @@ label.campo{display:block;font-size:14px;color:var(--muted);font-weight:800;marg
 </div>
 
 <script>
-var PILARES = ['Refrigerantes','Sucos','Isotônicos'];
+var PCOR = {'Sabores':'#F28C00','Retornáveis':'#B5000A','Refri Single':'#F40009','Sucos':'#3DBE4E','Powerade':'#2F7BFF','Missões Guiadas':'#9B5CF6'};
+function pcor(p){ return PCOR[p]||'#A3A3AD'; }
+function pnome(p){ return p==='Missões Guiadas' ? 'Missões Guiadas' : 'Volume '+p; }
 var st = { estado:null, mesId:null, aba:'mes', sv:null, pin:null, alvo:null, pilar:null, passo:null, enviando:false };
 
 /* ---------- utilitários ---------- */
-var API_URL = 'https://script.google.com/macros/s/AKfycbwHtu61uymU99GHCrwL2PyJhie3aElC7AfwAG6J4DfIK1Oh7W2e6fU9W3yR2x2LQLEs/exec'; // termina em /exec
+var API_URL = 'https://script.google.com/macros/s/AKfycbwHtu61uymU99GHCrwL2PyJhie3aElC7AfwAG6J4DfIK1Oh7W2e6fU9W3yR2x2LQLEs/exec';
 function api(fn){
   var args = Array.prototype.slice.call(arguments,1);
   return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args})})
@@ -223,7 +229,7 @@ function htmlVs(c){
   var lado = function(cod,nome,p,lad){ return '<div class="lado '+lad+cls(cod)+'"><b>'+esc(cod)+'</b><span>'+esc(curto(nome))+'</span>'+
     (temRes ? '<span class="res">'+pct(p)+(c.venc===cod?' <span class="mais5">+'+(c.pts||5)+' pts</span>':'')+'</span>' : '')+'</div>'; };
   return '<div class="vs"><span class="ord">'+(c.ordem||'')+'º</span>'+lado(c.a,c.nomeA,c.pa,'a')+'<span class="x">VS</span>'+lado(c.b,c.nomeB,c.pb,'b')+
-    '<div class="meta"><span class="pil '+esc(c.pilar)+'"><i></i>'+esc(c.pilar)+(c.tipo?' · '+esc(c.tipo):'')+'</span><span>'+(temRes&&c.venc==='Empate'?'Empate · ':'')+esc(dt(c.registrado))+'</span></div></div>';
+    '<div class="meta"><span class="pil"><i style="background:'+pcor(c.pilar)+'"></i>'+esc(pnome(c.pilar))+(c.tipo?' · '+esc(c.tipo):'')+'</span><span>'+(temRes&&c.venc==='Empate'?'Empate · ':'')+esc(dt(c.registrado))+'</span></div></div>';
 }
 
 function htmlPlacar(){
@@ -283,8 +289,13 @@ function renderFluxo(){
       '<div class="acoes"><button class="btn full" data-acao="irPilar"'+(st.alvo?'':' disabled')+'>Continuar</button></div>';
   }
   else if(st.passo==='pilar'){
-    h = cab('Em qual pilar?',2) + '<p class="ajuda">Vale o volume do pilar no mês, em % sobre a meta. Quem fizer o maior % leva +5 pontos.</p>'+
-      '<div class="pilares">'+PILARES.map(function(p){ return '<button class="pilar '+p+'" data-pilar="'+p+'" aria-pressed="'+(st.pilar===p)+'"><i></i>'+p+'</button>'; }).join('')+'</div>'+
+    var lista = (st.estado.pilares||{})[st.sv.tipo] || [];
+    if(st.pilar==='Missões Guiadas' && !m.missoes) st.pilar=null;
+    h = cab('Em qual pilar?',2) + '<p class="ajuda">Pilares de supervisor '+esc(st.sv.tipo.toLowerCase())+'. Vale o TT do mês em % sobre a meta. Quem fizer o maior % leva +5 pontos.</p>'+
+      '<div class="pilares">'+lista.map(function(p){
+        var mis = p==='Missões Guiadas', off = mis && !m.missoes;
+        return '<button class="pilar" style="--c:'+pcor(p)+'" data-pilar="'+esc(p)+'" aria-pressed="'+(st.pilar===p)+'"'+(off?' disabled':'')+'><i class="'+(mis?'alvo':'')+'" style="background:'+pcor(p)+'"></i><span>'+(mis?'<small>Missões</small>Guiadas':'<small>Volume</small>'+esc(p))+'</span>'+(off?'<em>Não vale em '+esc(m.nome)+'</em>':'')+'</button>';
+      }).join('')+'</div>'+
       '<div class="acoes"><button class="btn full" data-acao="irConfirmar"'+(st.pilar?'':' disabled')+'>Continuar</button><button class="btn ghost full" data-acao="voltarAlvo">Trocar adversário</button></div>';
   }
   else if(st.passo==='confirmar'){
@@ -349,9 +360,9 @@ function gerarImagem(){
     x.fillStyle='#F5F5F5'; x.font='900 118px Nunito, Arial'; x.fillText(c.a,W*.27,H/2-40); x.fillText(c.b,W*.73,H/2+150);
     x.fillStyle='#A3A3AD'; x.font='800 36px Nunito, Arial'; x.fillText(curto(c.nomeA),W*.27,H/2+10); x.fillText(curto(c.nomeB),W*.73,H/2+200);
     x.fillStyle='#FF3B42'; x.font='italic 900 150px Nunito, Arial'; x.fillText('VS',W/2,H/2+75);
-    var cor={Refrigerantes:'#F40009',Sucos:'#3DBE4E','Isotônicos':'#2F7BFF'}[c.pilar];
+    var cor=pcor(c.pilar);
     x.fillStyle=cor; roundRect(x,80,H-230,W-160,96,48); x.fill();
-    x.fillStyle='#fff'; x.font='900 46px Nunito, Arial'; x.fillText('Pilar: volume '+c.pilar.toLowerCase(),W/2,H-167);
+    x.fillStyle='#fff'; x.font='900 46px Nunito, Arial'; x.fillText('Pilar: '+pnome(c.pilar).toLowerCase(),W/2,H-167);
     x.fillStyle='#6C6C75'; x.font='800 28px Nunito, Arial'; x.fillText(c.ordem+'º desafio registrado · '+dt(c.registrado),W/2,H-70);
     cv.toBlob(function(blob){
       var url = URL.createObjectURL(blob), nome='desafio-'+c.a+'-vs-'+c.b+'.png';

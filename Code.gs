@@ -5,13 +5,18 @@
  */
 
 const ABA = { SUP: 'Supervisores', MES: 'Meses', CONF: 'Confrontos', LOG: 'Log' };
-const PILARES = ['Refrigerantes', 'Sucos', 'Isotônicos'];
+// Pilares por cargo (deck Pilares por Cargo). Missões Guiadas só vale nos meses marcados na aba Meses.
+const PILARES = {
+  Mista: ['Sabores', 'Retornáveis', 'Missões Guiadas', 'Sucos', 'Powerade'],
+  Segmentada: ['Sabores', 'Refri Single', 'Powerade', 'Sucos', 'Missões Guiadas']
+};
+const MISSOES = 'Missões Guiadas';
 const PONTOS_VITORIA = 5;
 const TZ = 'America/Sao_Paulo';
 
 const CAB = {
   SUP: ['Código', 'Nome', 'Gerência', 'Gerente', 'Rotas mistas', 'Rotas segmentadas', 'Tipo (ajuste)', 'PIN', 'Ativo'],
-  MES: ['Mês', 'Nome', 'Abertura', 'Fechamento', 'Status manual'],
+  MES: ['Mês', 'Nome', 'Abertura', 'Fechamento', 'Status manual', 'Missões Guiadas vale'],
   CONF: ['ID', 'Mês', 'Registrado em', 'Desafiante', 'Desafiado', 'Tipo', 'Pilar', 'Status',
          '% Desafiante', '% Desafiado', 'Vencedor', 'Pontos', 'Origem', 'Motivo cancelamento'],
   LOG: ['Quando', 'Quem', 'Ação', 'Detalhe', 'Resultado']
@@ -122,6 +127,12 @@ function configurar() {
     mes.getRange(2, 1, 3, 5).setValues(linhas);
   }
   mes.getRange(2, 3, 20, 2).setNumberFormat('dd/mm/yyyy hh:mm');
+  const nMes = Math.max(mes.getLastRow() - 1, 1);
+  const colF = mes.getRange(2, 6, nMes, 1);
+  const ids = mes.getRange(2, 1, nMes, 1).getValues();
+  const atuais = colF.getValues();
+  colF.setValues(atuais.map((v, i) => [v[0] === '' ? String(ids[i][0]) !== '2026-10' : v[0]]));
+  colF.insertCheckboxes();
   mes.getRange(2, 5, 20, 1).setDataValidation(
     SpreadsheetApp.newDataValidation().requireValueInList(['Aberto', 'Travado', 'Encerrado'], true).build());
   conf.getRange('A:B').setNumberFormat('@');
@@ -159,6 +170,7 @@ function apiEstado(mesId) {
       agora: agora.getTime(),
       meses: meses,
       mesId: id,
+      pilares: PILARES,
       sup: sups.filter(s => s.ativo).map(s => ({ cod: s.cod, nome: s.nome, ger: s.ger, tipo: s.tipo, livre: !ocup.has(s.cod) })),
       confrontos: confs.filter(c => c.mes === id && c.status !== 'Cancelado')
         .sort((a, b) => a.registrado - b.registrado)
@@ -235,6 +247,7 @@ function apiAdminDados(token) {
     return {
       agora: agora.getTime(),
       url: ScriptApp.getService().getUrl(),
+      pilares: PILARES,
       planilha: SpreadsheetApp.getActive().getUrl(),
       meses: lerMeses_().map(m => Object.assign(pubMes_(m, agora), { manual: m.manual })),
       sup: sups.map(s => ({ cod: s.cod, nome: s.nome, ger: s.ger, gerente: s.gerente, m: s.m, s: s.s, ajuste: s.ajuste,
@@ -254,8 +267,8 @@ function apiAdminSalvarMes(token, m) {
       if (!mes) throw new Error('Mês não encontrado.');
       if (!m.abertura || !m.fechamento || m.fechamento <= m.abertura) throw new Error('O fechamento precisa ser depois da abertura.');
       if (['', 'Aberto', 'Travado', 'Encerrado'].indexOf(m.manual) < 0) throw new Error('Status inválido.');
-      aba_(ABA.MES).getRange(mes.linha, 3, 1, 3).setValues([[new Date(m.abertura), new Date(m.fechamento), m.manual]]);
-      log_('admin', 'Mês', m.id + ' · ' + fmt_(m.abertura) + ' a ' + fmt_(m.fechamento) + ' · ' + (m.manual || 'automático'), 'Salvo');
+      aba_(ABA.MES).getRange(mes.linha, 3, 1, 4).setValues([[new Date(m.abertura), new Date(m.fechamento), m.manual, !!m.missoes]]);
+      log_('admin', 'Mês', m.id + ' · ' + fmt_(m.abertura) + ' a ' + fmt_(m.fechamento) + ' · ' + (m.manual || 'automático') + ' · Missões ' + (m.missoes ? 'vale' : 'não vale'), 'Salvo');
       return {};
     });
   });
@@ -388,13 +401,15 @@ function registrar_(mesId, codA, codB, pilar, origem, exigirJanela) {
       : 'Os desafios de ' + mes.nome + ' já fecharam.');
   }
   if (!exigirJanela && st === 'Encerrado') throw new Error(mes.nome + ' já está encerrado.');
-  if (PILARES.indexOf(pilar) < 0) throw new Error('Escolha um pilar: Refrigerantes, Sucos ou Isotônicos.');
   const sups = lerSup_();
   const A = sups.find(s => s.cod === codA && s.ativo);
   const B = sups.find(s => s.cod === codB && s.ativo);
   if (!A || !B) throw new Error('Supervisão não encontrada ou inativa.');
   if (A.cod === B.cod) throw new Error('Não dá para desafiar a si mesmo.');
   if (A.tipo !== B.tipo) throw new Error(B.cod + ' é ' + B.tipo + '. Supervisor ' + A.tipo + ' só desafia ' + A.tipo + '.');
+  const validos = PILARES[A.tipo] || [];
+  if (validos.indexOf(pilar) < 0) throw new Error('Pilar inválido para ' + A.tipo + '. Escolha: ' + validos.join(', ') + '.');
+  if (pilar === MISSOES && !mes.missoes) throw new Error('Missões Guiadas não vale para confronto em ' + mes.nome + '. Escolha outro pilar.');
   const confs = lerConf_();
   const ocup = ocupados_(confs, mesId);
   if (ocup.has(A.cod)) throw new Error((origem === 'Portal' ? 'Você já está' : A.cod + ' já está') + ' em um confronto em ' + mes.nome + '.');
@@ -468,13 +483,14 @@ function lerMeses_() {
   const sh = aba_(ABA.MES);
   const n = sh.getLastRow() - 1;
   if (n < 1) return [];
-  return sh.getRange(2, 1, n, 5).getValues().map((r, i) => ({
+  return sh.getRange(2, 1, n, 6).getValues().map((r, i) => ({
     linha: i + 2,
     id: r[0] instanceof Date ? Utilities.formatDate(r[0], TZ, 'yyyy-MM') : String(r[0]).trim(),
     nome: String(r[1]).trim(),
     abertura: r[2] instanceof Date ? r[2] : null,
     fechamento: r[3] instanceof Date ? r[3] : null,
-    manual: String(r[4]).trim()
+    manual: String(r[4]).trim(),
+    missoes: r[5] === true || String(r[5]).toUpperCase() === 'TRUE'
   })).filter(m => m.id);
 }
 
@@ -496,7 +512,7 @@ function lerConf_() {
 
 function pubMes_(m, agora) {
   return { id: m.id, nome: m.nome, abertura: m.abertura ? m.abertura.getTime() : null,
-    fechamento: m.fechamento ? m.fechamento.getTime() : null, status: statusMes_(m, agora) };
+    fechamento: m.fechamento ? m.fechamento.getTime() : null, status: statusMes_(m, agora), missoes: m.missoes };
 }
 
 function pubConf_(c, mapa, ordem) {
